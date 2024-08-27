@@ -1,0 +1,29 @@
+version: "3.12"
+name: "image_name"
+services:
+    backend_service_name:
+        build: .
+        container_name: backend_container
+        ports:
+            - "3003:3003" 
+        volumes:
+            - ./backend:/app/
+        depends_on: 
+            - db_service_name
+        environment:
+            DB_USER: dbuser
+            DB_PASSWORD: dbpassword
+            DB_NAME: dbname
+            DB_TYPE: postgres
+            DB_PORT: 5432
+            DB_HOST: db_service_name
+    db_service_name:
+        image: postgres
+        container_name: database_container
+        environment: 
+            POSTGRES_PASSWORD: dbpassword
+            POSTGRES_USER: dbuser
+            POSTGRES_DB: dbname
+            PG_DATA: /var/lib/postgresql/data
+        volumes:
+            - ./db:/var/lib/postgresql/data

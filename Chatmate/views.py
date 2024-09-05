@@ -131,7 +131,8 @@ class QueryViewSet(viewsets.ModelViewSet):
                 raise ValidationError('Query text and room ID are required')
             
             response_text = process_query(query_text, room_id)
-            query = Query.objects.create(query_text=query_text, response_text=response_text, room_id=room_id)
+            print("Response text:", response_text)
+            query = Query.objects.create(query_text=query_text, response_text=response_text, name=room_id)
             
             return create_response(
                 True, 

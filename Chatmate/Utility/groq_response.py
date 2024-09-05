@@ -1,13 +1,13 @@
 import os
 from groq import Groq
 
-def generate_response_with_llama(query, model="llama3-8b-8192"):
+def generate_response_with_llama(query, model="llama-3.1-70b-versatile"):
     """
     Generate a response using the specified Groq model.
     """
     try:
         # Initialize the Groq client with API key from environment variable
-        client = Groq(api_key="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")
+        client = Groq(api_key="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")
 
         # Create a chat completion request
         chat_completion = client.chat.completions.create(
@@ -19,6 +19,8 @@ def generate_response_with_llama(query, model="llama3-8b-8192"):
             ],
             model=model,
         )
+
+        print("Chat completion response:", chat_completion)
 
         # Extract and return the content from the response
         return chat_completion.choices[0].message.content

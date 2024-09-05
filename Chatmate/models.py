@@ -8,7 +8,7 @@ def generate_random_id():
     return str(random.randint(100000, 999999))
 
 class Rooms(models.Model):
-    id = models.CharField(max_length=6, primary_key=True, default=generate_random_id, editable=False)
+    id = models.CharField(max_length=255, primary_key=True, default=generate_random_id, editable=False)
     name = models.CharField(max_length=255, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

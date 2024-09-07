@@ -31,7 +31,7 @@ class Query(models.Model):
     response_text = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 
-    room = models.ForeignKey(Rooms, on_delete=models.CASCADE, to_field='id', related_name='queries')
+    room = models.ForeignKey(Rooms, on_delete=models.CASCADE, to_field='name', related_name='queries')
 
     def save(self, *args, **kwargs):
         if not Query.objects.filter(query_text=self.query_text).exists():
@@ -44,3 +44,5 @@ class CombinedChunk(models.Model):
     chunks = models.JSONField(default=list)  
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    room = models.ForeignKey(Rooms, on_delete=models.CASCADE, to_field='name', related_name='combined_chunks')

@@ -60,13 +60,11 @@ def chunk_to_dict(chunk):
         logger.error(f"Error converting chunk to dict: {str(e)}")
         return {}
 
-def update_combined_chunks(document_ids, delete=False):
+def update_combined_chunks(document_ids, room=None, delete=False):
     from Chatmate.models import CombinedChunk
     try:
-        print("document_ids:: ", document_ids)  
-        print("delete:: ", delete)
         all_chunks = load_documents(document_ids)
-        combined_chunk_instance, created = CombinedChunk.objects.get_or_create(id=1, defaults={'chunks': all_chunks})
+        combined_chunk_instance, created = CombinedChunk.objects.get_or_create(room=room, defaults={'chunks': all_chunks})
         # print("all_chunks:: ", all_chunks)
         # print("combined_chunk_instance:: ", combined_chunk_instance.chunks)
         if delete:

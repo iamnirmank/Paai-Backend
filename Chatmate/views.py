@@ -22,7 +22,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
             rooms = request.data.get('room')
             room = Rooms.objects.get(name=rooms)
             document = Documents.objects.create(file=file, title=title, link=link, room=room)
-            update_combined_chunks(document_ids=[document.id])
+            update_combined_chunks(document_ids=[document.id], room=room)
             
             return create_response(
                 True, 
@@ -52,13 +52,13 @@ class DocumentViewSet(viewsets.ModelViewSet):
                 if document.file:
                     document.file.delete
                 document.file = file
-                update_combined_chunks(document_ids=[document.id])
+                update_combined_chunks(document_ids=[document.id], room=room)
             if link:
                 document.link = link
-                update_combined_chunks(document_ids=[document.id])
+                update_combined_chunks(document_ids=[document.id], room=room)
             if room:
                 document.room = room
-                update_combined_chunks(document_ids=[document.id])
+                update_combined_chunks(document_ids=[document.id], room=room)
 
             document.save()
             
@@ -95,6 +95,26 @@ class DocumentViewSet(viewsets.ModelViewSet):
                 f'Error deleting document: {str(e)}', 
                 status_code=status.HTTP_400_BAD_REQUEST
             )
+    # get documents by id
+    @action(detail=True, methods=['get'])
+    def get_documents(self, request, pk=None):
+        try:
+            documents = Documents.objects.filter(room=pk)
+            if not documents.exists():
+                raise ValidationError('No documents found for this room')
+            
+            return create_response(
+                True, 
+                'Documents fetched successfully', 
+                body=DocumentSerializer(documents, many=True).data, 
+                status_code=status.HTTP_200_OK
+            )
+        except Exception as e:
+            return create_response(
+                False, 
+                f'Error fetching documents: {str(e)}', 
+                status_code=status.HTTP_400_BAD_REQUEST
+            )
 
     @action(detail=False, methods=['delete'])
     def delete_all_documents(self, request):
@@ -126,13 +146,13 @@ class QueryViewSet(viewsets.ModelViewSet):
     def process_chat(self, request):
         try:
             query_text = request.data.get('query')
-            room_id = request.data.get('room')
-            if not query_text or not room_id:
+            room_name = request.data.get('room')
+            if not query_text or not room_name:
                 raise ValidationError('Query text and room ID are required')
             
-            response_text = process_query(query_text, room_id)
-            print("Response text:", response_text)
-            query = Query.objects.create(query_text=query_text, response_text=response_text, name=room_id)
+            response_text = process_query(query_text, room_name)
+            room = Rooms.objects.get(name=room_name)
+            query = Query.objects.create(query_text=query_text, response_text=response_text, room=room)
             
             return create_response(
                 True, 
@@ -152,11 +172,11 @@ class QueryViewSet(viewsets.ModelViewSet):
         try:
             query = self.get_object()
             query_text = request.data.get('query')
-            room_id = request.data.get('room')
+            room_name = request.data.get('room')
             query.query_text = query_text
-            query.response_text = process_query(query_text, room_id)
-            if room_id:
-                query.room_id = room_id
+            query.response_text = process_query(query_text, room_name)
+            if room_name:
+                query.room_name = room_name
             query.save()
             
             return create_response(
@@ -175,7 +195,7 @@ class QueryViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['get'])
     def get_queries_by_room_id(self, request, pk=None):
         try:
-            queries = Query.objects.filter(room_id=pk)
+            queries = Query.objects.filter(room=pk)
             if not queries.exists():
                 raise ValidationError('No queries found for this room')
             
@@ -201,3 +221,23 @@ class CombinedChunkViewSet(viewsets.ModelViewSet):
 class RoomsViewSet(viewsets.ModelViewSet):
     queryset = Rooms.objects.all()
     serializer_class = RoomsSerializer
+
+    @action(detail=True, methods=['delete'])
+    def delete_room(self, request, pk=None):
+        try:
+            room = self.get_object()
+            documents = Documents.objects.filter(room=room)
+            documents.delete()
+            room.delete()
+            
+            return create_response(
+                True, 
+                'Room deleted successfully', 
+                status_code=status.HTTP_200_OK
+            )
+        except Exception as e:
+            return create_response(
+                False, 
+                f'Error deleting room: {str(e)}', 
+                status_code=status.HTTP_400_BAD_REQUEST
+            )

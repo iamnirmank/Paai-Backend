@@ -120,6 +120,26 @@ paths:
           description: ''
       tags:
       - api
+  /api/chatmate/api/document/{id}/get_documents/:
+    get:
+      operationId: getDocumentsDocuments
+      description: ''
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: A unique integer value identifying this documents.
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Document'
+          description: ''
+      tags:
+      - api
   /api/chatmate/api/query/:
     get:
       operationId: listQueries

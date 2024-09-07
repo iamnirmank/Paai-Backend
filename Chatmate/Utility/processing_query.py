@@ -5,17 +5,17 @@ import logging
 
 from Chatmate.Utility.groq_response import generate_response_with_llama
 from Chatmate.Utility.indexing_documents import compute_embeddings, create_index, process_documents, process_texts, retrieve_chunks
-from Chatmate.models import CombinedChunk, Query
+from Chatmate.models import CombinedChunk, Query, Rooms
 
 # Set up logging
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
-def process_query(query, room_id):
+def process_query(query, room_name):
     """Process a user query by retrieving relevant documents and generating a response."""
     try:
-        context = context_extraction(query)
-        previous_context = process_history(room_id)
+        context = context_extraction(query, room_name)
+        previous_context = process_history(room_name)
         additional_note = (
             "Provide a detailed and thorough answer. "
             "Use a natural and conversational tone, "
@@ -35,10 +35,10 @@ def process_query(query, room_id):
     return response
 
 
-def context_extraction(query):
+def context_extraction(query, room_name):
     """Index the documents into Milvus using LlamaIndex."""
     try:
-        chunk = CombinedChunk.objects.get(id=1).chunks
+        chunk = CombinedChunk.objects.get(room=room_name).chunks
         if not chunk:
             return "No documents found."
         chunks = process_documents(chunk)
@@ -60,10 +60,10 @@ def context_extraction(query):
         context = "An error occurred while extracting context."
     return context
 
-def process_history(room_id):
+def process_history(room_name):
     """Process the chat history to extract the context."""
     try:
-        prev_queries = Query.objects.filter(room=room_id)
+        prev_queries = Query.objects.filter(room=room_name)
         if not prev_queries.exists():
             return "No chat history found."
         chats = []

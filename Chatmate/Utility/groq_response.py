@@ -20,8 +20,6 @@ def generate_response_with_llama(query, model="llama-3.1-70b-versatile"):
             model=model,
         )
 
-        print("Chat completion response:", chat_completion)
-
         # Extract and return the content from the response
         return chat_completion.choices[0].message.content
 

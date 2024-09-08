@@ -10,7 +10,6 @@ def compare_chunks(chunk1, chunk2):
     Compare two chunks based on their text fields.
     Returns True if the text fields are similar, otherwise False.
     """
-    print("chunk1:: ", chunk1.get('text'))
     return chunk1.get('text') == chunk2.get('text')
 
 def load_documents(document_ids):
@@ -65,15 +64,13 @@ def update_combined_chunks(document_ids, room=None, delete=False):
     try:
         all_chunks = load_documents(document_ids)
         combined_chunk_instance, created = CombinedChunk.objects.get_or_create(room=room, defaults={'chunks': all_chunks})
-        # print("all_chunks:: ", all_chunks)
-        # print("combined_chunk_instance:: ", combined_chunk_instance.chunks)
+
         if delete:
             # Filter out chunks from combined_chunk_instance that are similar to any in all_chunks
             new_chunks = [
                 chunk for chunk in combined_chunk_instance.chunks
                 if not any(compare_chunks(chunk, ac) for ac in all_chunks)
             ]
-            # print("new_chunks:: ", new_chunks)
                         
             # Update the chunks field only if there's a change
             if len(new_chunks) != len(combined_chunk_instance.chunks):

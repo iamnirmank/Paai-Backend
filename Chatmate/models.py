@@ -2,7 +2,7 @@ import random
 from django.db import models
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
-from Chatmate.Utility.processing_documents import load_documents
+from Auth.models import User
     
 def generate_random_id():
     return str(random.randint(100000, 999999))
@@ -12,6 +12,8 @@ class Rooms(models.Model):
     name = models.CharField(max_length=255, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, to_field='id', related_name='Users')
 
     def __str__(self):
         return self.name

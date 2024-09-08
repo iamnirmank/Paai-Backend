@@ -9,6 +9,7 @@ from django.conf.urls.static import static
 # Create a custom namespace for your API URLs to avoid conflicts with Django's authentication URLs.
 api_urlpatterns = [
     path('chatmate/', include('Chatmate.urls')), 
+    path('auth/', include('Auth.urls')),
 ]
 
 schema_view = get_schema_view(

@@ -28,7 +28,7 @@ SECRET_KEY = 'django-insecure-(d3^^8lk!3m#jn83=pm_rxga7a72+s=r(lka!l!hbsea_2t(*#
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['paai.azurewebsites.net', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['paaibackend-fwhfd9hdhug6h8gs.eastus-01.azurewebsites.net', 'localhost', '127.0.0.1']
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
@@ -91,24 +91,24 @@ WSGI_APPLICATION = 'paAI.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
-
-
 # DATABASES = {
 #     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'production',
-#         'USER': 'paiaiuser',
-#         'PASSWORD': 'Paai2024@',
-#         'HOST': 'paaiserver.postgres.database.azure.com',
-#         'PORT': '5432',
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
+
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'production',
+        'USER': 'paiaiuser',
+        'PASSWORD': 'Paai2024@',
+        'HOST': 'paaiserver.postgres.database.azure.com',
+        'PORT': '5432',
+    }
+}
 
 
 # Password validation
@@ -216,7 +216,7 @@ SIMPLE_JWT = {
     'BLACKLIST_AFTER_ROTATION': True,
 }
 
-BACKEND_URL = 'http://localhost:8000'
+BACKEND_URL = 'https://paaibackend-fwhfd9hdhug6h8gs.eastus-01.azurewebsites.net'
 FRONTEND_URL = 'http://localhost:3000'
 
 # Email settings

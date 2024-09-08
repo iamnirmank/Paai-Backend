@@ -217,7 +217,7 @@ SIMPLE_JWT = {
 }
 
 BACKEND_URL = 'https://paaibackend-fwhfd9hdhug6h8gs.eastus-01.azurewebsites.net'
-FRONTEND_URL = 'http://localhost:3000'
+FRONTEND_URL = 'https://happy-forest-077fe6b0f.5.azurestaticapps.net'
 
 # Email settings
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

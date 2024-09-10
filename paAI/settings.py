@@ -28,7 +28,7 @@ SECRET_KEY = 'django-insecure-(d3^^8lk!3m#jn83=pm_rxga7a72+s=r(lka!l!hbsea_2t(*#
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['paaibackend-fwhfd9hdhug6h8gs.eastus-01.azurewebsites.net', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['paaiserver.azurewebsites.net', 'localhost', '127.0.0.1']
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
@@ -189,8 +189,9 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173',
     'http://localhost:5174',
     'http://127.0.0.1:5173',
-    'https://ambitious-pond-0af2e5e0f.5.azurestaticapps.net',
+    'https://happy-forest-077fe6b0f.5.azurestaticapps.net',
 ]
+
 CORS_ALLOW_METHODS = [
     'GET',
     'POST',
@@ -216,7 +217,7 @@ SIMPLE_JWT = {
     'BLACKLIST_AFTER_ROTATION': True,
 }
 
-BACKEND_URL = 'https://paaibackend-fwhfd9hdhug6h8gs.eastus-01.azurewebsites.net'
+BACKEND_URL = 'https://paaiserver.azurewebsites.net'
 FRONTEND_URL = 'https://happy-forest-077fe6b0f.5.azurestaticapps.net'
 
 # Email settings

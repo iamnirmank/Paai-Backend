@@ -3,132 +3,15 @@ info:
   title: ''
   version: ''
 paths:
-  /api/chatmate/api/document/:
-    get:
-      operationId: listDocuments
-      description: ''
-      parameters: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Document'
-          description: ''
-      tags:
-      - api
-    post:
-      operationId: createDocuments
-      description: ''
-      parameters: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Document'
-      responses:
-        '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Document'
-          description: ''
-      tags:
-      - api
-  /api/chatmate/api/document/{id}/:
-    get:
-      operationId: retrieveDocuments
-      description: ''
-      parameters:
-      - name: id
-        in: path
-        required: true
-        description: A unique integer value identifying this documents.
-        schema:
-          type: string
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Document'
-          description: ''
-      tags:
-      - api
-    put:
-      operationId: updateDocuments
-      description: ''
-      parameters:
-      - name: id
-        in: path
-        required: true
-        description: A unique integer value identifying this documents.
-        schema:
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Document'
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Document'
-          description: ''
-      tags:
-      - api
-    patch:
-      operationId: partialUpdateDocuments
-      description: ''
-      parameters:
-      - name: id
-        in: path
-        required: true
-        description: A unique integer value identifying this documents.
-        schema:
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Document'
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Document'
-          description: ''
-      tags:
-      - api
-    delete:
-      operationId: destroyDocuments
-      description: ''
-      parameters:
-      - name: id
-        in: path
-        required: true
-        description: A unique integer value identifying this documents.
-        schema:
-          type: string
-      responses:
-        '204':
-          description: ''
-      tags:
-      - api
   /api/chatmate/api/document/{id}/get_documents/:
     get:
-      operationId: getDocumentsDocuments
+      operationId: getDocumentsDocument
       description: ''
       parameters:
       - name: id
         in: path
         required: true
-        description: A unique integer value identifying this documents.
+        description: ''
         schema:
           type: string
       responses:
@@ -137,123 +20,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Document'
-          description: ''
-      tags:
-      - api
-  /api/chatmate/api/query/:
-    get:
-      operationId: listQueries
-      description: ''
-      parameters: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Query'
-          description: ''
-      tags:
-      - api
-    post:
-      operationId: createQuery
-      description: ''
-      parameters: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Query'
-      responses:
-        '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Query'
-          description: ''
-      tags:
-      - api
-  /api/chatmate/api/query/{id}/:
-    get:
-      operationId: retrieveQuery
-      description: ''
-      parameters:
-      - name: id
-        in: path
-        required: true
-        description: A unique integer value identifying this query.
-        schema:
-          type: string
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Query'
-          description: ''
-      tags:
-      - api
-    put:
-      operationId: updateQuery
-      description: ''
-      parameters:
-      - name: id
-        in: path
-        required: true
-        description: A unique integer value identifying this query.
-        schema:
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Query'
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Query'
-          description: ''
-      tags:
-      - api
-    patch:
-      operationId: partialUpdateQuery
-      description: ''
-      parameters:
-      - name: id
-        in: path
-        required: true
-        description: A unique integer value identifying this query.
-        schema:
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Query'
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Query'
-          description: ''
-      tags:
-      - api
-    delete:
-      operationId: destroyQuery
-      description: ''
-      parameters:
-      - name: id
-        in: path
-        required: true
-        description: A unique integer value identifying this query.
-        schema:
-          type: string
-      responses:
-        '204':
           description: ''
       tags:
       - api
@@ -265,7 +31,7 @@ paths:
       - name: id
         in: path
         required: true
-        description: A unique integer value identifying this query.
+        description: ''
         schema:
           type: string
       responses:
@@ -277,168 +43,11 @@ paths:
           description: ''
       tags:
       - api
-  /api/chatmate/api/combinedchunk/:
+  /api/chatmate/api/rooms/get_rooms/:
     get:
-      operationId: listCombinedChunks
+      operationId: getRoomsRooms
       description: ''
       parameters: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/CombinedChunk'
-          description: ''
-      tags:
-      - api
-    post:
-      operationId: createCombinedChunk
-      description: ''
-      parameters: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CombinedChunk'
-      responses:
-        '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CombinedChunk'
-          description: ''
-      tags:
-      - api
-  /api/chatmate/api/combinedchunk/{id}/:
-    get:
-      operationId: retrieveCombinedChunk
-      description: ''
-      parameters:
-      - name: id
-        in: path
-        required: true
-        description: A unique integer value identifying this combined chunk.
-        schema:
-          type: string
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CombinedChunk'
-          description: ''
-      tags:
-      - api
-    put:
-      operationId: updateCombinedChunk
-      description: ''
-      parameters:
-      - name: id
-        in: path
-        required: true
-        description: A unique integer value identifying this combined chunk.
-        schema:
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CombinedChunk'
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CombinedChunk'
-          description: ''
-      tags:
-      - api
-    patch:
-      operationId: partialUpdateCombinedChunk
-      description: ''
-      parameters:
-      - name: id
-        in: path
-        required: true
-        description: A unique integer value identifying this combined chunk.
-        schema:
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CombinedChunk'
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CombinedChunk'
-          description: ''
-      tags:
-      - api
-    delete:
-      operationId: destroyCombinedChunk
-      description: ''
-      parameters:
-      - name: id
-        in: path
-        required: true
-        description: A unique integer value identifying this combined chunk.
-        schema:
-          type: string
-      responses:
-        '204':
-          description: ''
-      tags:
-      - api
-  /api/chatmate/api/rooms/:
-    get:
-      operationId: listRooms
-      description: ''
-      parameters: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Rooms'
-          description: ''
-      tags:
-      - api
-    post:
-      operationId: createRooms
-      description: ''
-      parameters: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Rooms'
-      responses:
-        '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Rooms'
-          description: ''
-      tags:
-      - api
-  /api/chatmate/api/rooms/{id}/:
-    get:
-      operationId: retrieveRooms
-      description: ''
-      parameters:
-      - name: id
-        in: path
-        required: true
-        description: A unique value identifying this rooms.
-        schema:
-          type: string
       responses:
         '200':
           content:
@@ -448,112 +57,15 @@ paths:
           description: ''
       tags:
       - api
-    put:
-      operationId: updateRooms
-      description: ''
-      parameters:
-      - name: id
-        in: path
-        required: true
-        description: A unique value identifying this rooms.
-        schema:
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Rooms'
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Rooms'
-          description: ''
-      tags:
-      - api
-    patch:
-      operationId: partialUpdateRooms
-      description: ''
-      parameters:
-      - name: id
-        in: path
-        required: true
-        description: A unique value identifying this rooms.
-        schema:
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Rooms'
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Rooms'
-          description: ''
-      tags:
-      - api
-    delete:
-      operationId: destroyRooms
-      description: ''
-      parameters:
-      - name: id
-        in: path
-        required: true
-        description: A unique value identifying this rooms.
-        schema:
-          type: string
-      responses:
-        '204':
-          description: ''
-      tags:
-      - api
-  /api/auth/api/user/:
+  /api/auth/api/user/{id}/verify_url/:
     get:
-      operationId: listUsers
-      description: ''
-      parameters: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/User'
-          description: ''
-      tags:
-      - api
-    post:
-      operationId: createUser
-      description: ''
-      parameters: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/User'
-      responses:
-        '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-          description: ''
-      tags:
-      - api
-  /api/auth/api/user/{id}/:
-    get:
-      operationId: retrieveUser
+      operationId: verifyUrlUser
       description: ''
       parameters:
       - name: id
         in: path
         required: true
-        description: A unique integer value identifying this user.
+        description: ''
         schema:
           type: string
       responses:
@@ -562,75 +74,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
-          description: ''
-      tags:
-      - api
-    put:
-      operationId: updateUser
-      description: ''
-      parameters:
-      - name: id
-        in: path
-        required: true
-        description: A unique integer value identifying this user.
-        schema:
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/User'
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-          description: ''
-      tags:
-      - api
-    patch:
-      operationId: partialUpdateUser
-      description: ''
-      parameters:
-      - name: id
-        in: path
-        required: true
-        description: A unique integer value identifying this user.
-        schema:
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/User'
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-          description: ''
-      tags:
-      - api
-    delete:
-      operationId: destroyUser
-      description: ''
-      parameters:
-      - name: id
-        in: path
-        required: true
-        description: A unique integer value identifying this user.
-        schema:
-          type: string
-      responses:
-        '204':
           description: ''
       tags:
       - api
   /api/chatmate/api/document/upload_file/:
     post:
-      operationId: uploadFileDocuments
+      operationId: uploadFileDocument
       description: ''
       parameters: []
       requestBody:
@@ -666,6 +115,25 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Query'
+          description: ''
+      tags:
+      - api
+  /api/chatmate/api/rooms/create_room/:
+    post:
+      operationId: createRoomRooms
+      description: ''
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Rooms'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Rooms'
           description: ''
       tags:
       - api
@@ -766,13 +234,13 @@ paths:
       - api
   /api/chatmate/api/document/{id}/update_document/:
     put:
-      operationId: updateDocumentDocuments
+      operationId: updateDocumentDocument
       description: ''
       parameters:
       - name: id
         in: path
         required: true
-        description: A unique integer value identifying this documents.
+        description: ''
         schema:
           type: string
       requestBody:
@@ -800,7 +268,7 @@ paths:
       - name: id
         in: path
         required: true
-        description: A unique integer value identifying this query.
+        description: ''
         schema:
           type: string
       requestBody:
@@ -817,25 +285,40 @@ paths:
           description: ''
       tags:
       - api
-  /api/chatmate/api/document/delete_all_documents/:
-    delete:
-      operationId: deleteAllDocumentsDocuments
-      description: ''
-      parameters: []
-      responses:
-        '204':
-          description: ''
-      tags:
-      - api
-  /api/chatmate/api/document/{id}/delete_document/:
-    delete:
-      operationId: deleteDocumentDocuments
+  /api/chatmate/api/rooms/{id}/update_room/:
+    put:
+      operationId: updateRoomRooms
       description: ''
       parameters:
       - name: id
         in: path
         required: true
-        description: A unique integer value identifying this documents.
+        description: ''
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Rooms'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Rooms'
+          description: ''
+      tags:
+      - api
+  /api/chatmate/api/document/{id}/delete_document/:
+    delete:
+      operationId: deleteDocumentDocument
+      description: ''
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ''
         schema:
           type: string
       responses:
@@ -851,7 +334,7 @@ paths:
       - name: id
         in: path
         required: true
-        description: A unique value identifying this rooms.
+        description: ''
         schema:
           type: string
       responses:
@@ -913,26 +396,6 @@ components:
       - query_text
       - response_text
       - room
-    CombinedChunk:
-      type: object
-      properties:
-        id:
-          type: integer
-          readOnly: true
-        chunks:
-          type: object
-        created_at:
-          type: string
-          format: date-time
-          readOnly: true
-        updated_at:
-          type: string
-          format: date-time
-          readOnly: true
-        room:
-          type: string
-      required:
-      - room
     Rooms:
       type: object
       properties:
@@ -950,8 +413,11 @@ components:
           type: string
           format: date-time
           readOnly: true
+        user:
+          type: integer
       required:
       - name
+      - user
     User:
       type: object
       properties:
@@ -969,7 +435,7 @@ components:
           type: boolean
           description: Designates that this user has all permissions without explicitly
             assigning them.
-        name:
+        full_name:
           type: string
           maxLength: 255
         email:
@@ -1003,5 +469,5 @@ components:
           description: Specific permissions for this user.
       required:
       - password
-      - name
+      - full_name
       - email

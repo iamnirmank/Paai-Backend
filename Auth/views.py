@@ -9,6 +9,8 @@ from .serializers import UserSerializer
 from .utils import get_user, jwt_encode_handler, generate_code, create_response, send_forgot_url, send_reset_email, send_verification_email, send_verification_url
 
 class UserViewSet(viewsets.GenericViewSet):
+    serializer_class = UserSerializer
+    
     @action(detail=False, methods=['POST'])
     def register(self, request):
         serializer = UserSerializer(data=request.data)

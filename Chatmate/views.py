@@ -14,24 +14,48 @@ from rest_framework.permissions import IsAuthenticated
 class AuthenticatedModelViewSet(viewsets.GenericViewSet):
     permission_classes = [IsAuthenticated]
 
+    def check_auth(self, room, auth_header):
+        check = check_valid_request(room, auth_header)
+        if not check:
+            return create_response(
+                False, 
+                'Unauthorized request', 
+                status_code=status.HTTP_401_UNAUTHORIZED
+            )
+        return check
+
 class DocumentViewSet(AuthenticatedModelViewSet):
-    @action(detail=False, methods=['post'], parser_classes=[MultiPartParser, FormParser])
+    serializer_class = DocumentSerializer
+    parser_classes = [MultiPartParser, FormParser]
+
+    def handle_document_update(self, document, room, file=None, title=None, link=None):
+        if title:
+            document.title = title
+        if file:
+            if document.file:
+                document.file.delete()
+            document.file = file
+            update_combined_chunks(document_ids=[document.id], room=room)
+        if link:
+            document.link = link
+            update_combined_chunks(document_ids=[document.id], room=room)
+        if room:
+            document.room = room
+            update_combined_chunks(document_ids=[document.id], room=room)
+        document.save()
+
+    @action(detail=False, methods=['post'])
     def upload_file(self, request):
         try:
             file = request.data.get('file')
             title = request.data.get('title')
             link = request.data.get('link')
-            rooms = request.data.get('room')
-            room = Rooms.objects.get(name=rooms)
+            room_name = request.data.get('room')
+            room = Rooms.objects.get(name=room_name)
 
             auth_header = request.headers.get('Authorization')
-            check = check_valid_request(room, auth_header)
-            if not check:
-                return create_response(
-                    False, 
-                    'Unauthorized request', 
-                    status_code=status.HTTP_401_UNAUTHORIZED
-                )
+            if not self.check_auth(room, auth_header):
+                return self.check_auth(room, auth_header)
             
             document = Documents.objects.create(file=file, title=title, link=link, room=room)
             update_combined_chunks(document_ids=[document.id], room=room)
@@ -49,40 +73,24 @@ class DocumentViewSet(AuthenticatedModelViewSet):
                 status_code=status.HTTP_400_BAD_REQUEST
             )
 
-    @action(detail=True, methods=['put'], parser_classes=[MultiPartParser, FormParser])
+    @action(detail=True, methods=['put'])
     def update_document(self, request, pk=None):
         try:
-            document = self.get_object()
-            file = request.data.get('file')
-            title = request.data.get('title')
-            link = request.data.get('link')
-            rooms = request.data.get('room')
-            room = Rooms.objects.get(name=rooms)
+            document = Documents.objects.get(id=pk)
+            room_name = request.data.get('room')
+            room = Rooms.objects.get(name=room_name)
 
             auth_header = request.headers.get('Authorization')
-            check = check_valid_request(room, auth_header)
-            if not check:
-                return create_response(
-                    False, 
-                    'Unauthorized request', 
-                    status_code=status.HTTP_401_UNAUTHORIZED
-                )
+            if not self.check_auth(room, auth_header):
+                return self.check_auth(room, auth_header)
             
-            if title:
-                document.title = title
-            if file:
-                if document.file:
-                    document.file.delete
-                document.file = file
-                update_combined_chunks(document_ids=[document.id], room=room)
-            if link:
-                document.link = link
-                update_combined_chunks(document_ids=[document.id], room=room)
-            if room:
-                document.room = room
-                update_combined_chunks(document_ids=[document.id], room=room)
-
-            document.save()
+            self.handle_document_update(
+                document,
+                room,
+                file=request.data.get('file'),
+                title=request.data.get('title'),
+                link=request.data.get('link')
+            )
             
             return create_response(
                 True, 
@@ -100,16 +108,13 @@ class DocumentViewSet(AuthenticatedModelViewSet):
     @action(detail=True, methods=['delete'])
     def delete_document(self, request, pk=None):
         try:
-            document = self.get_object()
-            rooms = Rooms.documents.filter(name=document.room)
+            document = Documents.objects.get(id=pk)
+            room = document.room
+
             auth_header = request.headers.get('Authorization')
-            check = check_valid_request(rooms, auth_header)
-            if not check:
-                return create_response(
-                    False, 
-                    'Unauthorized request', 
-                    status_code=status.HTTP_401_UNAUTHORIZED
-                )
+            if not self.check_auth(room, auth_header):
+                return self.check_auth(room, auth_header)
+            
             update_combined_chunks(document_ids=[document.id], delete=True)
             if document.file:
                 document.file.delete()
@@ -126,20 +131,17 @@ class DocumentViewSet(AuthenticatedModelViewSet):
                 f'Error deleting document: {str(e)}', 
                 status_code=status.HTTP_400_BAD_REQUEST
             )
-    # get documents by id
+
     @action(detail=True, methods=['get'])
     def get_documents(self, request, pk=None):
         try:
-            rooms = Rooms.objects.get(name=pk)
+            room = Rooms.objects.get(name=pk)
+
             auth_header = request.headers.get('Authorization')
-            check = check_valid_request(rooms, auth_header)
-            if not check:
-                return create_response(
-                    False, 
-                    'Unauthorized request', 
-                    status_code=status.HTTP_401_UNAUTHORIZED
-                )
-            documents = Documents.objects.filter(room=pk)
+            if not self.check_auth(room, auth_header):
+                return self.check_auth(room, auth_header)
+            
+            documents = Documents.objects.filter(room=room)
             if not documents.exists():
                 raise ValidationError('No documents found for this room')
             
@@ -156,44 +158,23 @@ class DocumentViewSet(AuthenticatedModelViewSet):
                 status_code=status.HTTP_400_BAD_REQUEST
             )
 
-    # @action(detail=False, methods=['delete'])
-    # def delete_all_documents(self, request): ## Caution: This is only for testing purposes
-    #     try:
-    #         documents = Documents.objects.all()
-    #         update_combined_chunks(document_ids=[doc.id for doc in documents], delete=True)
-    #         for document in documents:
-    #             if document.file:
-    #                 document.file.delete()
-    #             document.delete()
-    #         return create_response(
-    #             True, 
-    #             'All documents deleted successfully', 
-    #             status_code=status.HTTP_200_OK
-    #         )
-    #     except Exception as e:
-    #         return create_response(
-    #             False, 
-    #             f'Error deleting all documents: {str(e)}', 
-    #             status_code=status.HTTP_400_BAD_REQUEST
-    #         )
 
 class QueryViewSet(AuthenticatedModelViewSet):
+    serializer_class = QuerySerializer
+
     @action(detail=False, methods=['post'])
     def process_chat(self, request):
         try:
             query_text = request.data.get('query')
             room_name = request.data.get('room')
             room = Rooms.objects.get(name=room_name)
+
             auth_header = request.headers.get('Authorization')
-            check = check_valid_request(room, auth_header)
-            if not check:
-                return create_response(
-                    False, 
-                    'Unauthorized request', 
-                    status_code=status.HTTP_401_UNAUTHORIZED
-                )
-            if not query_text or not room_name:
-                raise ValidationError('Query text and room ID are required')
+            if not self.check_auth(room, auth_header):
+                return self.check_auth(room, auth_header)
+
+            if not query_text:
+                raise ValidationError('Query text is required')
             
             response_text = process_query(query_text, room_name)
             query = Query.objects.create(query_text=query_text, response_text=response_text, room=room)
@@ -210,26 +191,20 @@ class QueryViewSet(AuthenticatedModelViewSet):
                 f'Error processing query: {str(e)}', 
                 status_code=status.HTTP_400_BAD_REQUEST
             )
-    # edit query by id
+
     @action(detail=True, methods=['put'])
     def edit_query(self, request, pk=None):
         try:
-            query = self.get_object()
-            query_text = request.data.get('query')
+            query = Query.objects.get(id=pk)
             room_name = request.data.get('room')
             room = Rooms.objects.get(name=room_name)
+
             auth_header = request.headers.get('Authorization')
-            check = check_valid_request(room, auth_header)
-            if not check:
-                return create_response(
-                    False, 
-                    'Unauthorized request', 
-                    status_code=status.HTTP_401_UNAUTHORIZED
-                )
-            query.query_text = query_text
-            query.response_text = process_query(query_text, room_name)
-            if room_name:
-                query.room_name = room_name
+            if not self.check_auth(room, auth_header):
+                return self.check_auth(room, auth_header)
+
+            query.query_text = request.data.get('query')
+            query.response_text = process_query(query.query_text, room_name)
             query.save()
             
             return create_response(
@@ -249,15 +224,12 @@ class QueryViewSet(AuthenticatedModelViewSet):
     def get_queries_by_room_id(self, request, pk=None):
         try:
             room = Rooms.objects.get(name=pk)
+
             auth_header = request.headers.get('Authorization')
-            check = check_valid_request(room, auth_header)
-            if not check:
-                return create_response(
-                    False, 
-                    'Unauthorized request', 
-                    status_code=status.HTTP_401_UNAUTHORIZED
-                )
-            queries = Query.objects.filter(room=pk)
+            if not self.check_auth(room, auth_header):
+                return self.check_auth(room, auth_header)
+
+            queries = Query.objects.filter(room=room)
             if not queries.exists():
                 raise ValidationError('No queries found for this room')
             
@@ -274,25 +246,23 @@ class QueryViewSet(AuthenticatedModelViewSet):
                 status_code=status.HTTP_400_BAD_REQUEST
             )
 
+
 class RoomsViewSet(AuthenticatedModelViewSet):
+    serializer_class = RoomsSerializer
+
     @action(detail=False, methods=['get'])
     def get_rooms(self, request):
         try:
             auth_header = request.headers.get('Authorization')
-            if auth_header and auth_header.startswith('Bearer '):
-                parts = auth_header.split(' ')
-            if len(parts) == 2:
-                token = parts[1]
+            token = auth_header.split(' ')[1] if auth_header and auth_header.startswith('Bearer ') else None
             
             if not token:
-                return None
-            
-            decoded_token = jwt_decode_handler(token)
+                return create_response(False, 'Invalid token', status_code=status.HTTP_400_BAD_REQUEST)
 
+            decoded_token = jwt_decode_handler(token)
             user = User.objects.get(id=decoded_token['user_id'])
 
             rooms = Rooms.objects.filter(user=user)
-
             if not rooms.exists():
                 raise ValidationError('No rooms found')
             
@@ -312,17 +282,13 @@ class RoomsViewSet(AuthenticatedModelViewSet):
     @action(detail=True, methods=['delete'])
     def delete_room(self, request, pk=None):
         try:
-            room = self.get_object()
+            room = Rooms.objects.get(id=pk)
             auth_header = request.headers.get('Authorization')
-            check = check_valid_request(room, auth_header)
-            if not check:
-                return create_response(
-                    False, 
-                    'Unauthorized request', 
-                    status_code=status.HTTP_401_UNAUTHORIZED
-                )
-            documents = Documents.objects.filter(room=room)
-            documents.delete()
+            if not self.check_auth(room, auth_header):
+                return self.check_auth(room, auth_header)
+
+            Documents.objects.filter(room=room).delete()
+            Query.objects.filter(room=room).delete()
             room.delete()
             
             return create_response(
@@ -336,25 +302,23 @@ class RoomsViewSet(AuthenticatedModelViewSet):
                 f'Error deleting room: {str(e)}', 
                 status_code=status.HTTP_400_BAD_REQUEST
             )
-    
+
     @action(detail=True, methods=['put'])
     def update_room(self, request, pk=None):
         try:
-            room = self.get_object()
-            name = request.data.get('name')
-            user = request.data.get('user')
+            room = Rooms.objects.get(id=pk)
+
             auth_header = request.headers.get('Authorization')
-            check = check_valid_request(room, auth_header)
-            if not check:
-                return create_response(
-                    False, 
-                    'Unauthorized request', 
-                    status_code=status.HTTP_401_UNAUTHORIZED
-                )
-            if name:
-                room.name = name
-            if user:
-                room.user = user
+            if not self.check_auth(room, auth_header):
+                return self.check_auth(room, auth_header)
+
+            room.name = request.data.get('name', room.name)
+            user = request.data.get('user', room.user)
+            room.user = User.objects.get(id=user)
+            queries = Query.objects.filter(room=room)
+            for query in queries:
+                query.room = room
+                query.save()
             room.save()
             
             return create_response(
@@ -369,13 +333,14 @@ class RoomsViewSet(AuthenticatedModelViewSet):
                 f'Error updating room: {str(e)}', 
                 status_code=status.HTTP_400_BAD_REQUEST
             )
-        
+
     @action(detail=False, methods=['post'])
     def create_room(self, request):
         try:
             name = request.data.get('name')
             user_id = request.data.get('user')
             user = User.objects.get(id=user_id)
+
             room = Rooms.objects.create(name=name, user=user)
             
             return create_response(

@@ -31,6 +31,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
     verification_code = models.CharField(max_length=6, blank=True, null=True)
     is_verified = models.BooleanField(default=False)
+    # is_staff = models.BooleanField(default=False)
     password_reset_token = models.CharField(max_length=32, blank=True, null=True)
     password_reset_token_created_at = models.DateTimeField(blank=True, null=True)
 

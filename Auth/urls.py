@@ -4,6 +4,7 @@ from . import views
 
 router = routers.DefaultRouter()
 router.register(r'user', views.UserViewSet, basename='user')
+router.register(r'feedback', views.FeedbackViewSet, basename='feedback')
 
 urlpatterns = [
     path('api/', include(router.urls)),  

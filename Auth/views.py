@@ -4,9 +4,10 @@ from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from django.utils import timezone
 from django.contrib.auth.hashers import make_password
-from .models import User
-from .serializers import UserSerializer
-from .utils import get_user, jwt_encode_handler, generate_code, create_response, send_forgot_url, send_reset_email, send_verification_email, send_verification_url
+from .models import Feedback, User
+from .serializers import UserSerializer, FeedbackSerializer
+from .utils import get_user, jwt_decode_handler, jwt_encode_handler, generate_code, create_response, send_forgot_url, send_reset_email, send_verification_email, send_verification_url
+from rest_framework.permissions import IsAuthenticated
 
 class UserViewSet(viewsets.GenericViewSet):
     serializer_class = UserSerializer
@@ -125,3 +126,48 @@ class UserViewSet(viewsets.GenericViewSet):
         user.save()
 
         return create_response(True, 'Password reset successfully.')
+    
+class FeedbackViewSet(viewsets.ModelViewSet):
+    serializer = FeedbackSerializer
+    permission_classes = [IsAuthenticated]
+
+    @action(detail=False, methods=['POST'])
+    def create_feedback(self, request):
+        try:
+            auth_header = request.headers.get('Authorization')  
+            if not auth_header or not auth_header.startswith('Bearer '):
+                return False
+            parts = auth_header.split(' ')
+            token = parts[1] if len(parts) == 2 else None
+            decoded_token = jwt_decode_handler(token)
+            user = User.objects.get(id=decoded_token['user_id'])
+            feedback = Feedback(user=user, feedback=request.data.get('feedback'), agreeToPay=request.data.get('useInFuture'))
+            feedback.save()
+            serialized_feedback = FeedbackSerializer(feedback).data
+
+            return create_response(True, 'Feedback created successfully.', serialized_feedback)
+        
+        except:
+            return create_response(False, 'Error creating feedback.', status_code=status.HTTP_400_BAD_REQUEST)
+        
+
+    @action(detail=False, methods=['GET'])
+    def get_feedbacks(self, request):
+
+        try:
+            auth_header = request.headers.get('Authorization')
+            if not auth_header or not auth_header.startswith('Bearer '):
+                return False
+            parts = auth_header.split(' ')  
+            token = parts[1] if len(parts) == 2 else None
+            decoded_token = jwt_decode_handler(token)
+            user = User.objects.get(id=decoded_token['user_id'])
+            if user:
+                get_all_feedbacks = Feedback.objects.filter(user=user)
+                serialized_feedbacks = FeedbackSerializer(get_all_feedbacks, many=True).data
+
+            return create_response(True, 'Feedbacks retrieved successfully.', serialized_feedbacks)
+        
+        except:
+            return create_response(False, 'Error retrieving feedbacks.', status_code=status.HTTP_400_BAD_REQUEST)
+        

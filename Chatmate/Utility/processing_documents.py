@@ -1,4 +1,4 @@
-from Chatmate.Utility.parsing_utility import document_parser, link_parser, read_file
+from Chatmate.Utility.parsing_utility import link_parser, read_file
 
 def compare_chunks(chunk1, chunk2):
     """

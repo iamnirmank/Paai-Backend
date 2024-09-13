@@ -18,7 +18,8 @@ class DocumentChunk:
 
 # Initialize the model with proper error handling
 try:
-    model = SentenceTransformer('all-MiniLM-L6-v2')
+#     model = SentenceTransformer('all-MiniLM-L6-v2')
+      model = "not implemented"
 except Exception as e:
     raise RuntimeError(f"Error initializing the model: {str(e)}")
 

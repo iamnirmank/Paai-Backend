@@ -8,14 +8,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Load .env file
 env_path = os.path.join(BASE_DIR, '.env')
+print("env_path: ", env_path)
 load_dotenv(dotenv_path=env_path)
 
 # Security settings
-SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-(d3^^8lk!3m#jn83=pm_rxga7a72+s=r(lka!l!hbsea_2t(*#')
+SECRET_KEY = os.getenv('SECRET_KEY')
+print("SECRET_KEY", SECRET_KEY)
 DEBUG = os.getenv('DEBUG') == 'True'
 
 # ALLOWED_HOSTS
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '').split(',')
+print("ALLOWED_HOSTS", ALLOWED_HOSTS)
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Application definition
@@ -100,6 +103,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization settings
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = os.getenv('TIME_ZONE')
+print("TIME_ZONE", TIME_ZONE)
 USE_I18N = True
 USE_TZ = True
 

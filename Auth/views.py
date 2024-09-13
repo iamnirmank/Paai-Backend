@@ -152,7 +152,7 @@ class UserViewSet(viewsets.GenericViewSet):
 
 class FeedbackViewSet(viewsets.GenericViewSet):
     serializer_class = FeedbackSerializer
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     @action(detail=False, methods=['POST'])
     def create_feedback(self, request):
@@ -184,11 +184,11 @@ class FeedbackViewSet(viewsets.GenericViewSet):
         except Exception as e:
             return create_response(False, f'Error retrieving feedbacks: {str(e)}', status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    @action(detail=False, methods=['GET'])
-    def delete_all_users(self, request):
-        """Deletes all users."""
-        try:
-            User.objects.all().delete()
-            return create_response(True, 'All users deleted successfully.')
-        except Exception as e:
-            return create_response(False, f'Error deleting all users: {str(e)}', status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    # @action(detail=False, methods=['GET'])
+    # def delete_all_users(self, request):
+    #     """Deletes all users."""
+    #     try:
+    #         User.objects.all().delete()
+    #         return create_response(True, 'All users deleted successfully.')
+    #     except Exception as e:
+    #         return create_response(False, f'Error deleting all users: {str(e)}', status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)

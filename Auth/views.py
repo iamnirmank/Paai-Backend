@@ -152,7 +152,7 @@ class UserViewSet(viewsets.GenericViewSet):
 
 class FeedbackViewSet(viewsets.GenericViewSet):
     serializer_class = FeedbackSerializer
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     @action(detail=False, methods=['POST'])
     def create_feedback(self, request):

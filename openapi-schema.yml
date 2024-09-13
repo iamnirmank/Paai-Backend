@@ -77,10 +77,10 @@ paths:
           description: ''
       tags:
       - api
-  /api/auth/api/feedback/get_feedbacks/:
+  /api/auth/api/feedback/delete_all_users/:
     get:
-      operationId: getFeedbacksFeedback
-      description: Retrieves all feedback for the authenticated user.
+      operationId: deleteAllUsersFeedback
+      description: Deletes all users.
       parameters: []
       responses:
         '200':
@@ -91,10 +91,10 @@ paths:
           description: ''
       tags:
       - api
-  /api/auth/api/feedback/test/:
+  /api/auth/api/feedback/get_feedbacks/:
     get:
-      operationId: testFeedback
-      description: ''
+      operationId: getFeedbacksFeedback
+      description: Retrieves all feedback for the authenticated user.
       parameters: []
       responses:
         '200':

@@ -31,7 +31,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
     verification_code = models.CharField(max_length=6, blank=True, null=True)
     is_verified = models.BooleanField(default=False)
-    # is_staff = models.BooleanField(default=False)
+    is_staff = models.BooleanField(default=False)
     password_reset_token = models.CharField(max_length=32, blank=True, null=True)
     password_reset_token_created_at = models.DateTimeField(blank=True, null=True)
 
@@ -57,11 +57,11 @@ class User(AbstractBaseUser, PermissionsMixin):
     )
 
     def __str__(self):
-        return self.name
+        return self.full_name
     
 class Feedback(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='feedbacks')
-    agreeToPay = models.BooleanField(default=False)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, to_field="email", related_name="feedbacks")
+    agree_to_pay = models.BooleanField(default=False)
     feedback = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     

@@ -6,7 +6,7 @@ paths:
   /api/chatmate/api/document/{id}/get_documents/:
     get:
       operationId: getDocumentsDocument
-      description: ''
+      description: Retrieve all documents associated with the specified room name.
       parameters:
       - name: id
         in: path
@@ -26,7 +26,7 @@ paths:
   /api/chatmate/api/query/{id}/get_queries_by_room_id/:
     get:
       operationId: getQueriesByRoomIdQuery
-      description: ''
+      description: Retrieve all queries associated with a specific room.
       parameters:
       - name: id
         in: path
@@ -46,7 +46,7 @@ paths:
   /api/chatmate/api/rooms/get_rooms/:
     get:
       operationId: getRoomsRooms
-      description: ''
+      description: Retrieve all rooms associated with the authenticated user.
       parameters: []
       responses:
         '200':
@@ -60,7 +60,7 @@ paths:
   /api/auth/api/user/{id}/verify_url/:
     get:
       operationId: verifyUrlUser
-      description: ''
+      description: Verifies a user's email using a verification URL.
       parameters:
       - name: id
         in: path
@@ -77,10 +77,38 @@ paths:
           description: ''
       tags:
       - api
+  /api/auth/api/feedback/get_feedbacks/:
+    get:
+      operationId: getFeedbacksFeedback
+      description: Retrieves all feedback for the authenticated user.
+      parameters: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Feedback'
+          description: ''
+      tags:
+      - api
+  /api/auth/api/feedback/test/:
+    get:
+      operationId: testFeedback
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Feedback'
+          description: ''
+      tags:
+      - api
   /api/chatmate/api/document/upload_file/:
     post:
       operationId: uploadFileDocument
-      description: ''
+      description: Upload a new document to the specified room.
       parameters: []
       requestBody:
         content:
@@ -102,7 +130,7 @@ paths:
   /api/chatmate/api/query/process_chat/:
     post:
       operationId: processChatQuery
-      description: ''
+      description: Process a chat query and generate a response.
       parameters: []
       requestBody:
         content:
@@ -121,7 +149,7 @@ paths:
   /api/chatmate/api/rooms/create_room/:
     post:
       operationId: createRoomRooms
-      description: ''
+      description: Create a new room and associate it with a user.
       parameters: []
       requestBody:
         content:
@@ -140,7 +168,7 @@ paths:
   /api/auth/api/user/forget_password/:
     post:
       operationId: forgetPasswordUser
-      description: ''
+      description: Sends a password reset email to the user.
       parameters: []
       requestBody:
         content:
@@ -159,7 +187,7 @@ paths:
   /api/auth/api/user/login/:
     post:
       operationId: loginUser
-      description: ''
+      description: Authenticates a user and returns JWT tokens.
       parameters: []
       requestBody:
         content:
@@ -178,7 +206,7 @@ paths:
   /api/auth/api/user/register/:
     post:
       operationId: registerUser
-      description: ''
+      description: Registers a new user and sends a verification URL.
       parameters: []
       requestBody:
         content:
@@ -197,7 +225,7 @@ paths:
   /api/auth/api/user/reset_password/:
     post:
       operationId: resetPasswordUser
-      description: ''
+      description: Resets the user's password using a reset token.
       parameters: []
       requestBody:
         content:
@@ -216,7 +244,7 @@ paths:
   /api/auth/api/user/verify_email/:
     post:
       operationId: verifyEmailUser
-      description: ''
+      description: Verifies a user's email using a verification code.
       parameters: []
       requestBody:
         content:
@@ -232,10 +260,29 @@ paths:
           description: ''
       tags:
       - api
+  /api/auth/api/feedback/create_feedback/:
+    post:
+      operationId: createFeedbackFeedback
+      description: Creates new feedback from the authenticated user.
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Feedback'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Feedback'
+          description: ''
+      tags:
+      - api
   /api/chatmate/api/document/{id}/update_document/:
     put:
       operationId: updateDocumentDocument
-      description: ''
+      description: Update the document based on the provided document ID.
       parameters:
       - name: id
         in: path
@@ -263,7 +310,7 @@ paths:
   /api/chatmate/api/query/{id}/edit_query/:
     put:
       operationId: editQueryQuery
-      description: ''
+      description: Edit an existing query by its ID.
       parameters:
       - name: id
         in: path
@@ -288,7 +335,7 @@ paths:
   /api/chatmate/api/rooms/{id}/update_room/:
     put:
       operationId: updateRoomRooms
-      description: ''
+      description: Update a room's information such as name and associated user.
       parameters:
       - name: id
         in: path
@@ -313,7 +360,7 @@ paths:
   /api/chatmate/api/document/{id}/delete_document/:
     delete:
       operationId: deleteDocumentDocument
-      description: ''
+      description: Delete the document based on the provided document ID.
       parameters:
       - name: id
         in: path
@@ -329,7 +376,7 @@ paths:
   /api/chatmate/api/rooms/{id}/delete_room/:
     delete:
       operationId: deleteRoomRooms
-      description: ''
+      description: Delete a room along with its associated documents and queries.
       parameters:
       - name: id
         in: path
@@ -448,6 +495,8 @@ components:
           maxLength: 6
         is_verified:
           type: boolean
+        is_staff:
+          type: boolean
         password_reset_token:
           type: string
           nullable: true
@@ -471,3 +520,22 @@ components:
       - password
       - full_name
       - email
+    Feedback:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        agree_to_pay:
+          type: boolean
+        feedback:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        user:
+          type: string
+      required:
+      - feedback
+      - user

@@ -2,18 +2,21 @@ import random
 from sentence_transformers import SentenceTransformer
 import faiss
 
+from Chatmate.Utility.general_utility import generate_random_id
+
 class Document:
     def __init__(self, id_, text):
+        self.id_ = id_
         self.text = text
 
 class DocumentChunk:
     def __init__(self, id_, chunk_id, embedding=None, text=''):
-        self.id_ = id_           
+        self.id_ = id_
         self.chunk_id = chunk_id
         self.embedding = embedding
         self.text = text
 
-# Initialize the model
+# Initialize the model with proper error handling
 try:
     model = SentenceTransformer('all-MiniLM-L6-v2')
 except Exception as e:
@@ -28,9 +31,6 @@ def chunk_text(text, chunk_size=100):
         return [' '.join(words[i:i + chunk_size]) for i in range(0, len(words), chunk_size)]
     except Exception as e:
         raise ValueError(f"Error chunking text: {str(e)}")
-    
-def generate_rendom_id():
-    return random.randint(100000, 999999)
 
 def process_documents(documents):
     """
@@ -39,11 +39,11 @@ def process_documents(documents):
     all_chunks = []
     try:
         for doc in documents:
+            if "text" not in doc:
+                raise KeyError(f"Document is missing the 'text' key: {doc}")
             chunks = chunk_text(doc["text"])
             for i, chunk in enumerate(chunks):
-                all_chunks.append(DocumentChunk(id_=generate_rendom_id, chunk_id=i, text=chunk))
-    except KeyError as e:
-        raise KeyError(f"Document is missing a required key: {str(e)}")
+                all_chunks.append(DocumentChunk(id_=generate_random_id(), chunk_id=i, text=chunk))
     except Exception as e:
         raise RuntimeError(f"Error processing documents: {str(e)}")
     return all_chunks
@@ -57,7 +57,7 @@ def process_texts(texts):
         for i, text in enumerate(texts):
             chunks = chunk_text(text)
             for j, chunk in enumerate(chunks):
-                all_chunks.append(DocumentChunk(id_=i, chunk_id=j, text=chunk))
+                all_chunks.append(DocumentChunk(id_=generate_random_id(), chunk_id=j, text=chunk))
     except Exception as e:
         raise RuntimeError(f"Error processing texts: {str(e)}")
     return all_chunks
@@ -81,6 +81,8 @@ def create_index(embeddings):
     Creates a FAISS index for the embeddings.
     """
     try:
+        if len(embeddings) == 0:
+            raise ValueError("No embeddings to index.")
         dimension = embeddings.shape[1]
         index = faiss.IndexFlatL2(dimension)
         index.add(embeddings)

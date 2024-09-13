@@ -390,6 +390,8 @@ class RoomsViewSet(AuthenticatedModelViewSet):
             room.name = request.data.get('name', room.name)
             user_id = request.data.get('user')
             room.user = User.objects.get(id=user_id) if user_id else room.user
+            Documents.objects.filter(room=room).update(room=room)
+            Query.objects.filter(room=room).update(room=room)
             room.save()
 
             return create_response(
